@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crew Timing Board</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg: #0a0c0e;
+    --panel: #14171a;
+    --panel-edge: #232830;
+    --amber: #ff9f1c;
+    --amber-dim: #8a5a12;
+    --cyan: #4fd8c9;
+    --text-dim: #6b7280;
+    --text: #e7e9ec;
+    --red: #e5484d;
+    --split-line: #05070a;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    min-height: 100vh;
+  }
+
+  body{
+    background-image:
+      radial-gradient(ellipse at 50% -10%, rgba(255,159,28,0.06), transparent 60%);
+  }
+
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  header{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--panel-edge);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+
+  .brand{
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 13px;
+    color: var(--amber);
+    text-transform: uppercase;
+  }
+
+  .brand small{
+    display:block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-top: 3px;
+    text-transform: none;
+  }
+
+  .clock-live{
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .std-panel{
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin-bottom: 26px;
+  }
+
+  .std-row{
+    display:flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .std-label{
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  #stdInput{
+    background: var(--split-line);
+    border: 1px solid var(--panel-edge);
+    color: var(--amber);
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 8px 14px;
+    border-radius: 4px;
+    width: 140px;
+    outline: none;
+  }
+  #stdInput:focus{
+    border-color: var(--amber-dim);
+  }
+
+  .std-hint{
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+
+  .board{
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .board-head{
+    display:grid;
+    grid-template-columns: 78px 1fr 70px;
+    padding: 10px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--panel-edge);
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns: 78px 1fr 70px;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--panel-edge);
+    transition: background 0.2s;
+  }
+  .row:last-child{ border-bottom: none; }
+  .row:hover{ background: rgba(255,255,255,0.02); }
+
+  .row.std-row-final{
+    background: rgba(255,159,28,0.06);
+  }
+
+  .flip-time{
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .row.std-row-final .flip-time{
+    color: var(--cyan);
+  }
+
+  .event-name{
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .event-sub{
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .offset{
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .row.std-row-final .offset{
+    color: var(--cyan);
+  }
+
+  footer{
+    margin-top: 18px;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  @media (max-width: 480px){
+    .board-head, .row{
+      grid-template-columns: 66px 1fr 56px;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+    .flip-time{ font-size: 18px; }
+    #stdInput{ font-size: 22px; width: 110px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">Crew Timing Board<small>Reverse-count from STD</small></div>
+    <div class="clock-live" id="liveClock">--:--:--</div>
+  </header>
+
+  <div class="std-panel">
+    <div class="std-row">
+      <span class="std-label">STD</span>
+      <input type="time" id="stdInput" value="14:00">
+      <span class="std-hint">24-hour, local time</span>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head">
+      <span>Time</span>
+      <span>Event</span>
+      <span style="text-align:right;">T-minus</span>
+    </div>
+    <div id="boardBody"></div>
+  </div>
+
+  <footer>Times before midnight roll back to the previous day automatically.</footer>
+
+</div>
+
+<script>
+  const events = [
+    { name: "Safety Question", note: "3 min duration", offset: 85 },
+    { name: "Pre-flight Briefing", note: "", offset: 82 },
+    { name: "Proceed to Bus", note: "", offset: 70 },
+    { name: "Bus Depart CX City", note: "", offset: 65 },
+    { name: "First Crew Arrive Aircraft", note: "", offset: 55 },
+    { name: "Passenger Boarding", note: "", offset: 35 },
+    { name: "Door Close", note: "", offset: 6 },
+  ];
+
+  const stdInput = document.getElementById('stdInput');
+  const boardBody = document.getElementById('boardBody');
+  const liveClock = document.getElementById('liveClock');
+
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function formatOffsetTime(stdMinutes, offset){
+    let total = stdMinutes - offset;
+    total = ((total % 1440) + 1440) % 1440; // wrap safely within a day
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    return pad(h) + ':' + pad(m);
+  }
+
+  function render(){
+    const val = stdInput.value;
+    if(!val){ boardBody.innerHTML = ''; return; }
+    const [hh, mm] = val.split(':').map(Number);
+    const stdMinutes = hh * 60 + mm;
+
+    let html = '';
+    events.forEach(ev => {
+      const t = formatOffsetTime(stdMinutes, ev.offset);
+      html += `
+        <div class="row">
+          <div class="flip-time">${t}</div>
+          <div>
+            <div class="event-name">${ev.name}</div>
+            ${ev.note ? `<div class="event-sub">${ev.note}</div>` : ''}
+          </div>
+          <div class="offset">T&minus;${ev.offset}</div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="row std-row-final">
+        <div class="flip-time">${pad(hh)}:${pad(mm)}</div>
+        <div>
+          <div class="event-name">STD</div>
+          <div class="event-sub">Scheduled time of departure</div>
+        </div>
+        <div class="offset">T-0</div>
+      </div>
+    `;
+
+    boardBody.innerHTML = html;
+  }
+
+  function tickClock(){
+    const now = new Date();
+    liveClock.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  }
+
+  stdInput.addEventListener('input', render);
+  render();
+  tickClock();
+  setInterval(tickClock, 1000);
+</script>
+
+</body>
+</html>

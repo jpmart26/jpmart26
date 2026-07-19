@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上班時間計算器</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    background: #f4f3ee;
+    color: #2c2c2a;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    width: 320px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+  .time-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  select {
+    font-size: 20px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 0.5px solid #d3d1c7;
+    background: #fff;
+    width: 76px;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .colon { font-size: 20px; color: #888780; }
+  .result {
+    background: #f1efe8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .result:last-child { margin-bottom: 0; }
+  .label { font-size: 14px; color: #5f5e5a; display: flex; align-items: center; gap: 6px; }
+  .value { font-size: 24px; font-weight: 500; }
+  .icon { font-size: 16px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>上班時間計算器</h1>
+    <div class="time-row">
+      <select id="hh"></select>
+      <span class="colon">:</span>
+      <select id="mm"></select>
+    </div>
+    <div class="result">
+      <span class="label"><span class="icon">🚶</span>出門時間</span>
+      <span class="value" id="leave">--:--</span>
+    </div>
+    <div class="result">
+      <span class="label"><span class="icon">⏰</span>準備時間</span>
+      <span class="value" id="prep">--:--</span>
+    </div>
+  </div>
+
+<script>
+const hhSel = document.getElementById('hh');
+const mmSel = document.getElementById('mm');
+
+for (let h = 0; h < 24; h++) {
+  const o = document.createElement('option');
+  o.value = h;
+  o.textContent = String(h).padStart(2, '0');
+  hhSel.appendChild(o);
+}
+for (let m = 0; m < 60; m += 5) {
+  const o = document.createElement('option');
+  o.value = m;
+  o.textContent = String(m).padStart(2, '0');
+  mmSel.appendChild(o);
+}
+hhSel.value = 9;
+mmSel.value = 0;
+
+function fmt(mins) {
+  mins = ((mins % 1440) + 1440) % 1440;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+
+function update() {
+  const total = parseInt(hhSel.value) * 60 + parseInt(mmSel.value);
+  document.getElementById('leave').textContent = fmt(total - 150);
+  document.getElementById('prep').textContent = fmt(total - 210);
+}
+
+hhSel.addEventListener('change', update);
+mmSel.addEventListener('change', update);
+update();
+</script>
+</body>
+</html>
